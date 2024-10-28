@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@vanillaes/csv':
+        specifier: ^3.0.4
+        version: 3.0.4
       nuxt:
         specifier: ^3.13.2
         version: 3.13.2(@parcel/watcher@2.4.1)(@types/node@22.8.1)(ioredis@5.4.1)(magicast@0.3.5)(rollup@4.24.2)(terser@5.36.0)(vite@5.4.10(@types/node@22.8.1)(terser@5.36.0))
@@ -1011,6 +1014,10 @@ packages:
     resolution: {integrity: sha512-v6ddp4YEQCNILhYrx37Yt0GKRIFeTrb3VSmTbjh+URT+ua1mwgmNFTfl2ZldtTtri3tEkwSG1/5wLRq20ma70g==}
     peerDependencies:
       vue: '>=2.7 || >=3'
+
+  '@vanillaes/csv@3.0.4':
+    resolution: {integrity: sha512-cMJ/pAljVGpsHvqgd5N4EpNJOvMjFubg7x+9ehjVgQUFi2h+u4Nc4O4C0ErNLV53rO3rI0W1JnKX3wQz0pWgIA==}
+    engines: {node: '>=14'}
 
   '@vercel/nft@0.26.5':
     resolution: {integrity: sha512-NHxohEqad6Ra/r4lGknO52uc/GrWILXAMs1BB4401GTqww0fw1bAqzpG1XHuDO+dprg4GvsD9ZLLSsdo78p9hQ==}
@@ -4434,6 +4441,8 @@ snapshots:
       hookable: 5.5.3
       unhead: 1.11.10
       vue: 3.5.12
+
+  '@vanillaes/csv@3.0.4': {}
 
   '@vercel/nft@0.26.5':
     dependencies:

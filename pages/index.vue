@@ -2,4 +2,7 @@
   <div class="text-4xl font-bold text-center p-10">RATE MY SCHOOL</div>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import schools from "~/data/schools.json";
+console.log("schools", schools);
+</script>
