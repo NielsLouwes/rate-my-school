@@ -52,6 +52,10 @@ const onSubmit = (event: Event) => {
   event.preventDefault();
 
   try {
+    // need to inject uniqueID into the date before parsing - replace with UUID library
+    const uniqueID = new Date().toISOString();
+    state.value.uniqueId = uniqueID;
+
     const validatedData = schema.parse(state.value);
     console.log("Validated Data:", validatedData);
     errors.value = {}; // Clear any previous errors
