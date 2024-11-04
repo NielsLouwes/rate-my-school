@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { z } from "zod";
 import { ref } from "vue";
+import { nationalities } from "~/data/nationalities";
+import { schoolNames } from "~/utils/data-clean";
+
+const props = defineProps<{
+  showForm: boolean;
+}>();
 
 const schema = z.object({
   uniqueId: z.string().optional(),
   schoolName: z.string().nonempty("School name is required"),
-  sex: z.enum(["male", "female", "prefer not to say"]),
+  sex: z.enum(["male", "female", "prefer not to say", ""]).optional(),
   nationality: z.string().nonempty("Nationality is required"),
   currentStudent: z.boolean(),
   yearOfStudy: z.string().optional(),
@@ -28,7 +34,7 @@ type Schema = z.infer<typeof schema>;
 const state = ref<Schema>({
   uniqueId: "",
   schoolName: "",
-  sex: "prefer not to say",
+  sex: "",
   nationality: "",
   currentStudent: false,
   yearOfStudy: "",
@@ -59,6 +65,10 @@ const onSubmit = (event: Event) => {
     const validatedData = schema.parse(state.value);
     console.log("Validated Data:", validatedData);
     errors.value = {}; // Clear any previous errors
+
+    if (!errors.value) {
+      reloadNuxtApp();
+    }
   } catch (error) {
     if (error instanceof z.ZodError) {
       errors.value = error.errors.reduce((acc, curr) => {
@@ -69,6 +79,7 @@ const onSubmit = (event: Event) => {
 
       console.error("Validation Errors:", errors.value);
     }
+  } finally {
   }
 };
 
@@ -78,17 +89,25 @@ const setRating = (field: keyof Schema, value: number) => {
 </script>
 
 <template>
-  <form class="space-y-4 p-6 bg-white shadow-md rounded-md" @submit="onSubmit">
+  <form
+    class="space-y-4 p-6 bg-white shadow-md rounded-md h-full w-1/2 bg-blue-100"
+    @submit="onSubmit"
+  >
     <!-- New fields -->
     <div class="flex flex-col mb-4">
       <label for="schoolName" class="font-semibold">School Name</label>
-      <input
+      <select
         v-model="state.schoolName"
         id="schoolName"
         class="border p-2 rounded-md"
         :class="{ 'border-red-500': errors.schoolName }"
-      />
-      <p v-if="errors.schoolName" class="text-red-500 text-sm">
+      >
+        <option value=""></option>
+        <option v-for="school in schoolNames()" :key="school" :value="school">
+          {{ school }}
+        </option>
+      </select>
+      <p v-if="errors.schoolName" class="text-sm">
         {{ errors.schoolName }}
       </p>
     </div>
@@ -105,42 +124,60 @@ const setRating = (field: keyof Schema, value: number) => {
         <option value="female">Female</option>
         <option value="prefer not to say">Prefer not to say</option>
       </select>
-      <p v-if="errors.sex" class="text-red-500 text-sm">
+      <p v-if="errors.sex" class="text-sm">
         {{ errors.sex }}
       </p>
     </div>
 
     <div class="flex flex-col mb-4">
       <label for="nationality" class="font-semibold">Nationality</label>
-      <input
+      <select
         v-model="state.nationality"
         id="nationality"
         class="border p-2 rounded-md"
         :class="{ 'border-red-500': errors.nationality }"
-      />
-      <p v-if="errors.nationality" class="text-red-500 text-sm">
+      >
+        <option
+          v-for="nationality in nationalities"
+          :key="nationality"
+          :value="nationality"
+        >
+          {{ nationality }}
+        </option>
+      </select>
+      <p v-if="errors.nationality" class="text-red.DEFAULT text-sm">
         {{ errors.nationality }}
       </p>
     </div>
 
-    <div class="flex flex-col mb-4">
-      <label for="currentStudent" class="font-semibold">Current Student</label>
+    <div class="flex flex-col">
+      <label for="currentStudent" class="font-semibold"
+        >Current Student ?</label
+      >
       <input
         type="checkbox"
         v-model="state.currentStudent"
         id="currentStudent"
-        class="mt-2"
       />
     </div>
 
     <div v-if="state.currentStudent" class="flex flex-col mb-4">
       <label for="yearOfStudy" class="font-semibold">Year of Study</label>
-      <input
+      <select
         v-model="state.yearOfStudy"
         id="yearOfStudy"
         class="border p-2 rounded-md"
         :class="{ 'border-red-500': errors.yearOfStudy }"
-      />
+      >
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+      </select>
       <p v-if="errors.yearOfStudy" class="text-red-500 text-sm">
         {{ errors.yearOfStudy }}
       </p>
@@ -171,11 +208,10 @@ const setRating = (field: keyof Schema, value: number) => {
             @click="setRating('qualityOfTeaching', n)"
           >
             <i
-              :class="
-                n <= state.qualityOfTeaching
-                  ? 'text-yellow-500'
-                  : 'text-gray-300'
-              "
+              :class="{
+                'text-yellow-500': n <= (state.qualityOfTeaching ?? 0),
+                'text-gray-300': n > (state.qualityOfTeaching ?? 0),
+              }"
               >★</i
             >
           </span>
@@ -460,5 +496,8 @@ const setRating = (field: keyof Schema, value: number) => {
 <style scoped>
 i {
   font-size: 1.5rem;
+}
+.text-sm {
+  color: red;
 }
 </style>

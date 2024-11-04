@@ -14,3 +14,9 @@ export const filteredData = () =>
       uniqueId: school["BEVOEGD GEZAG NUMMER"],
     };
   });
+
+export const schoolNames = () => {
+  return schools.map((school) => {
+    return school.INSTELLINGSNAAM;
+  });
+};
