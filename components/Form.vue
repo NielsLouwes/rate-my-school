@@ -3,10 +3,7 @@ import { z } from "zod";
 import { ref } from "vue";
 import { nationalities } from "~/data/nationalities";
 import { schoolNames } from "~/utils/data-clean";
-
-const props = defineProps<{
-  showForm: boolean;
-}>();
+import { v4 as uuidv4 } from "uuid";
 
 const schema = z.object({
   uniqueId: z.string().optional(),
@@ -54,21 +51,21 @@ const state = ref<Schema>({
 
 const errors = ref<Partial<Record<keyof Schema, string>>>({});
 
+const emit = defineEmits<{
+  (event: "formSubmitted", data: Schema): void;
+}>();
+
 const onSubmit = (event: Event) => {
   event.preventDefault();
 
   try {
     // need to inject uniqueID into the date before parsing - replace with UUID library
-    const uniqueID = new Date().toISOString();
+    const uniqueID = uuidv4();
     state.value.uniqueId = uniqueID;
 
     const validatedData = schema.parse(state.value);
-    console.log("Validated Data:", validatedData);
-    errors.value = {}; // Clear any previous errors
 
-    if (!errors.value) {
-      reloadNuxtApp();
-    }
+    emit("formSubmitted", validatedData);
   } catch (error) {
     if (error instanceof z.ZodError) {
       errors.value = error.errors.reduce((acc, curr) => {
